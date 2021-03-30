@@ -2,6 +2,7 @@ import time
 import traceback
 from typing import Dict, List, Optional
 
+from src.consensus.cost_calculator import NPCResult
 from src.types.blockchain_format.program import SerializedProgram
 from src.types.blockchain_format.sized_bytes import bytes32
 from src.types.coin_record import CoinRecord
@@ -128,7 +129,7 @@ def mempool_assert_my_amount(condition: ConditionVarPair, unspent: CoinRecord) -
     return None
 
 
-def get_name_puzzle_conditions(block_program: SerializedProgram, safe_mode: bool):
+def get_name_puzzle_conditions(block_program: SerializedProgram, safe_mode: bool, prev_generators=None) -> NPCResult:
     # TODO: allow generator mod to take something (future)
     # TODO: write more tests
     block_program_args = SerializedProgram.from_bytes(b"\x80")
@@ -156,7 +157,7 @@ def get_name_puzzle_conditions(block_program: SerializedProgram, safe_mode: bool
                 elif not safe_mode:
                     opcode = ConditionOpcode.UNKNOWN
                 else:
-                    return "Unknown operator in safe mode.", None, None
+                    return NPCResult(Err.GENERATOR_RUNTIME_ERROR.value, [], uint64(0))
                 if len(list(cond.as_iter())) > 1:
                     cond_var_list = []
                     for cond_1 in cond.rest().as_iter():
@@ -169,10 +170,9 @@ def get_name_puzzle_conditions(block_program: SerializedProgram, safe_mode: bool
             if conditions_dict is None:
                 conditions_dict = {}
             npc_list.append(NPC(name, puzzle_hash, [(a, b) for a, b in conditions_dict.items()]))
-        return None, npc_list, uint64(cost)
+        return NPCResult(None, npc_list, uint64(cost))
     except Exception:
-        tb = traceback.format_exc()
-        return tb, None, None
+        return NPCResult(Err.GENERATOR_RUNTIME_ERROR.value, [], uint64(0))
 
 
 def get_puzzle_and_solution_for_coin(block_program: SerializedProgram, coin_name: bytes):

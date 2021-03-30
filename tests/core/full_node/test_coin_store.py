@@ -13,6 +13,7 @@ from src.full_node.coin_store import CoinStore
 from src.types.blockchain_format.coin import Coin
 from src.types.coin_record import CoinRecord
 from src.types.full_block import FullBlock
+from src.util.generator_tools import run_and_get_removals_and_additions
 from src.util.ints import uint64
 from src.util.wallet_tools import WalletTool
 from tests.setup_nodes import bt, test_constants
@@ -92,11 +93,11 @@ class TestCoinStore:
             should_be_included.add(farmer_coin)
             should_be_included.add(pool_coin)
             if block.is_transaction_block():
-                removals, additions = block.tx_removals_and_additions()
+                removals, additions = run_and_get_removals_and_additions(block)
 
                 assert block.get_included_reward_coins() == should_be_included_prev
 
-                await coin_store.new_block(block)
+                await coin_store.new_block(block, additions, removals)
 
                 for expected_coin in should_be_included_prev:
                     # Check that the coinbase rewards are added
@@ -133,7 +134,8 @@ class TestCoinStore:
         # Save/get block
         for block in blocks:
             if block.is_transaction_block():
-                await coin_store.new_block(block)
+                removals, additions = run_and_get_removals_and_additions(block)
+                await coin_store.new_block(block, additions, removals)
                 coins = block.get_included_reward_coins()
                 records = [await coin_store.get_coin_record(coin.name()) for coin in coins]
 
@@ -160,7 +162,8 @@ class TestCoinStore:
 
         for block in blocks:
             if block.is_transaction_block():
-                await coin_store.new_block(block)
+                removals, additions = run_and_get_removals_and_additions(block)
+                await coin_store.new_block(block, additions, removals)
                 coins = block.get_included_reward_coins()
                 records: List[Optional[CoinRecord]] = [await coin_store.get_coin_record(coin.name()) for coin in coins]
 
