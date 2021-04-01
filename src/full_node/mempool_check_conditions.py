@@ -13,7 +13,7 @@ from src.util.clvm import int_from_bytes
 from src.util.condition_tools import ConditionOpcode, conditions_by_opcode
 from src.util.errors import Err
 from src.util.hash import std_hash
-from src.util.ints import uint32, uint64
+from src.util.ints import uint32, uint64, uint16
 from src.wallet.puzzles.generator_loader import GENERATOR_FOR_SINGLE_COIN_MOD
 from src.wallet.puzzles.lowlevel_generator import get_generator
 
@@ -157,7 +157,7 @@ def get_name_puzzle_conditions(block_program: SerializedProgram, safe_mode: bool
                 elif not safe_mode:
                     opcode = ConditionOpcode.UNKNOWN
                 else:
-                    return NPCResult(Err.GENERATOR_RUNTIME_ERROR.value, [], uint64(0))
+                    return NPCResult(uint16(Err.GENERATOR_RUNTIME_ERROR.value), [], uint64(0))
                 if len(list(cond.as_iter())) > 1:
                     cond_var_list = []
                     for cond_1 in cond.rest().as_iter():
@@ -172,7 +172,7 @@ def get_name_puzzle_conditions(block_program: SerializedProgram, safe_mode: bool
             npc_list.append(NPC(name, puzzle_hash, [(a, b) for a, b in conditions_dict.items()]))
         return NPCResult(None, npc_list, uint64(cost))
     except Exception:
-        return NPCResult(Err.GENERATOR_RUNTIME_ERROR.value, [], uint64(0))
+        return NPCResult(uint16(Err.GENERATOR_RUNTIME_ERROR.value), [], uint64(0))
 
 
 def get_puzzle_and_solution_for_coin(block_program: SerializedProgram, coin_name: bytes):
