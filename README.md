@@ -1,5 +1,6 @@
 # chia-blockchain
 ![Alt text](https://www.chia.net/img/chia_logo.svg)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftrentontemple%2Fchia-blockchain.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Ftrentontemple%2Fchia-blockchain?ref=badge_shield)
 
 | Current Release/main | Development Branch/dev |
 |         :---:          |          :---:         |
@@ -48,3 +49,7 @@ Once installed, a
 [Quick Start Guide](https://github.com/Chia-Network/chia-blockchain/wiki/Quick-Start-Guide)
 is available from the repository
 [wiki](https://github.com/Chia-Network/chia-blockchain/wiki).
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftrentontemple%2Fchia-blockchain.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Ftrentontemple%2Fchia-blockchain?ref=badge_large)
